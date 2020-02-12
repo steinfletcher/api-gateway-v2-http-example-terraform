@@ -1,0 +1,56 @@
+Parameters:
+  Name:
+    Type: String
+  DomainName:
+    Type: String
+  CertificateDomain:
+    Type: String
+  CertificateArn:
+    Type: String
+  HostedZoneName:
+    Type: String
+
+Resources:
+  Api:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Ref Name
+      Description: Api
+      ProtocolType: HTTP
+  Domain:
+    Type: 'AWS::ApiGatewayV2::DomainName'
+    Properties:
+      DomainName: !Ref DomainName
+      DomainNameConfigurations:
+        - EndpointType: REGIONAL
+          CertificateArn: !Ref CertificateArn
+          CertificateName: !Ref CertificateDomain
+  Stage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      StageName: "$default"
+      ApiId: !Ref Api
+      AutoDeploy: true
+  ApiMapping:
+    Type: 'AWS::ApiGatewayV2::ApiMapping'
+    Properties:
+      DomainName: !Ref DomainName
+      ApiId: !Ref Api
+      ApiMappingKey: "mtude-api"
+      Stage: !Ref Stage
+  DnsRecord:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneName: !Ref HostedZoneName
+      RecordSets:
+        - Name: !Ref DomainName
+          Type: A
+          AliasTarget:
+            HostedZoneId: !GetAtt Domain.RegionalHostedZoneId
+            DNSName: !GetAtt Domain.RegionalDomainName
+
+Outputs:
+  ApiId:
+    Value: !Ref Api
+    Export:
+      Name: !Sub ${AWS::StackName}-ApiId
