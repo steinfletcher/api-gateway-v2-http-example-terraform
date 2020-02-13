@@ -16,5 +16,6 @@ resource "aws_cloudformation_stack" "api" {
     HostedZoneName    = data.aws_route53_zone.zone.name
     CertificateDomain = data.aws_acm_certificate.domain.domain
     CertificateArn    = data.aws_acm_certificate.domain.arn
+    ApiMappingKey     = var.api_mapping_key
   }
 }

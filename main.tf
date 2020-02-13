@@ -1,12 +1,16 @@
+locals {
+  api_name = "my-api"
+}
 
 data "aws_cloudformation_export" api_id {
-  name = "my-api-ApiId"
+  name = "${local.api_name}-ApiId"
 }
 
 module "api_gw" {
-  source      = "./api_gateway"
-  domain_name = "api.blah.com"
-  name        = "my-api"
+  source          = "./api_gateway"
+  domain_name     = "api.blah.com"
+  name            = local.api_name
+  api_mapping_key = "api"
 }
 
 module "endpoints" {

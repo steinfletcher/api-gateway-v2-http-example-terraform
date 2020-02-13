@@ -9,6 +9,8 @@ Parameters:
     Type: String
   HostedZoneName:
     Type: String
+  ApiMappingKey:
+    Type: String
 
 Resources:
   Api:
@@ -36,7 +38,7 @@ Resources:
     Properties:
       DomainName: !Ref DomainName
       ApiId: !Ref Api
-      ApiMappingKey: "mtude-api"
+      ApiMappingKey: !Ref ApiMappingKey
       Stage: !Ref Stage
   DnsRecord:
     Type: AWS::Route53::RecordSetGroup
